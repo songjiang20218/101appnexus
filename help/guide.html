@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <!-- <script src="./axios.js"></script> -->
+    <title>Help</title>
+    <script src="./vue.min.js"></script>
+    <script src="./locale.js"></script>
+</head>
+<style>
+    /* 页面容器 */
+
+    /* 定义从左侧滑入的关键帧动画 */
+    @keyframes slideInFromRight {
+        from {
+            transform: translateX(100%);
+        }
+
+        to {
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes slideInFromLeft {
+        from {
+            transform: translateX(-100%);
+        }
+
+        to {
+            transform: translateX(0);
+        }
+    }
+
+
+    /* 应用滑入动画 */
+    .slide-in {
+        animation: slideInFromRight 0.2s ease-out forwards;
+        overflow-x: hidden;
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
+
+    .slide-out {
+        animation: slideInFromLeft 0.2s ease-out forwards;
+        overflow-x: hidden;
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        background: #FFFFFF;
+    }
+
+
+    #app {
+        box-sizing: border-box;
+        
+        padding-bottom: calc(32px + constant(safe-area-inset-bottom));
+        padding-bottom: calc(32px + env(safe-area-inset-bottom));
+
+    }
+
+    .header {
+        padding: 16px;
+        background: #FFFFFF;
+        text-align: center;
+        position: fixed;
+        font-size: 17px;
+        font-family: SFPro, SFPro;
+        font-weight: 600;
+        color: #000000;
+        line-height: 22px;
+        left: 0;
+        top: 0;
+        width: 100%;
+        box-sizing: border-box;
+        padding-top: calc(16px + constant(safe-area-inset-top));
+        padding-top: calc(16px + env(safe-area-inset-top));
+        z-index: 10;
+    }
+
+    .back {
+        position: absolute;
+        left: 8px;
+        bottom: 16px;
+        width: 24px;
+    }
+
+
+
+    .title {
+        font-size: 16px;
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 600;
+        color: #000000;
+        line-height: 24px;
+        padding: 0 16px;
+        margin-bottom: 4px;
+    }
+
+    .sub-title {
+        font-size: 15px;
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 600;
+        color: #000000;
+        line-height: 22px;
+        padding: 0 16px;
+        margin-bottom: 4px;
+    }
+
+    .detail {
+        font-size: 15px;
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 400;
+        color: #000000;
+        line-height: 22px;
+        padding: 0 16px;
+        margin-bottom: 24px;
+
+    }
+
+    .download {
+        width: calc(100% - 32px);
+        background: #FFFFFF;
+        border-radius: 16px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        padding: 8px 16px;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 0 auto 24px;
+    }
+
+    .download>.left {
+        display: flex;
+        align-items: center;
+    }
+
+    .download>img {
+        width: 24px;
+    }
+
+    .top-title {
+        font-size: 16px;
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 600;
+        color: #000000;
+        line-height: 22px;
+        margin-bottom: 4px;
+    }
+
+    .bottom-detail {
+        font-size: 12px;
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 400;
+        color: rgba(0, 0, 0, 0.3);
+        line-height: 17px;
+    }
+</style>
+
+<body>
+    <!-- -->
+    <div id="app" :style="`padding-top:${70+navHeight}px`" >
+        <div class="header" :style="`padding-top:${16+navHeight}px`">
+            <img @click="back" class="back" src="./img/back.png" alt="">
+            {{titleObj[brand]||page_data.normal.header}}
+        </div>
+        <div v-if="brand=='tapo'">
+            <div class="download">
+                <div class="left">
+                    <img style="width: 64px;margin-right: 8px;border-radius: 16px;border: 1px solid rgba(0, 0, 0, 0.1);"
+                        src="./img/tapo_icon.png" alt="">
+                    <div>
+                        <div class="">
+                            Tapo
+                        </div>
+                        <div class="bottom-detail">
+                            {{page_data.tapo&&page_data.tapo.downloadDetail}}
+                        </div>
+                    </div>
+                </div>
+                <img @click="toAppStore('https://apps.apple.com/app/id1614007873')" src="./img/download.png" alt="">
+            </div>
+            <div style="text-align: center;margin-bottom: 24px;">
+                <img style="height: 168px;" src="./img/tapo_camera.png" alt="">
+            </div>
+            <div class="title">
+                {{page_data.tapo&&page_data.tapo.step1Title}}
+            </div>
+            <div class="detail">
+                {{page_data.tapo&&page_data.tapo.step1Detail}}
+            </div>
+            <div class="title">
+                {{page_data.tapo&&page_data.tapo.step2Title}}
+            </div>
+            <div class="detail">
+                {{page_data.tapo&&page_data.tapo.step2Detail}}
+            </div>
+            <div class="title">
+                {{page_data.tapo&&page_data.tapo.step3Title}}
+            </div>
+            <div class="detail">
+                {{page_data.tapo&&page_data.tapo.step3Detail}}
+            </div>
+            <div class="title">
+                {{page_data.tapo&&page_data.tapo.step4Title}}
+            </div>
+            <div class="detail">
+                {{page_data.tapo&&page_data.tapo.step4Detail}}
+            </div>
+            <div class="title">
+                {{page_data.tapo&&page_data.tapo.step5Title}}
+            </div>
+            <div class="detail">
+                {{page_data.tapo&&page_data.tapo.step5Detail}}
+            </div>
+            <div class="title">
+                {{page_data.tapo&&page_data.tapo.step6Title}}
+            </div>
+            <div class="detail">
+                {{page_data.tapo&&page_data.tapo.step6Detail}}
+            </div>
+            <div class="title">
+                {{page_data.tapo&&page_data.tapo.step7Title}}
+            </div>
+            <div class="detail">
+                {{page_data.tapo&&page_data.tapo.step7Detail}}
+            </div>
+            <div class="title">
+                {{page_data.tapo&&page_data.tapo.step8Title}}
+            </div>
+            <div class="detail">
+                {{page_data.tapo&&page_data.tapo.step8Detail}}
+            </div>
+            <div class="title">
+                {{page_data.tapo&&page_data.tapo.step9Title}}
+            </div>
+            <div class="detail">
+                {{page_data.tapo&&page_data.tapo.step9Detail}}
+            </div>
+            <div class="title">
+                {{page_data.tapo&&page_data.tapo.step10Title}}
+            </div>
+            <div class="detail">
+                {{page_data.tapo&&page_data.tapo.step10Detail}}
+            </div>
+            <div class="detail">
+                {{page_data.tapo&&page_data.tapo.step11Detail}}
+            </div>
+
+        </div>
+        <div v-else-if="brand=='blink'">
+            <div class="download">
+                <div class="left">
+                    <img style="width: 64px;margin-right: 8px;border-radius: 16px;" src="./img/b.png" alt="">
+                    <div>
+                        <div class="">
+                            Blink Home Monitor
+                        </div>
+                        <div class="bottom-detail">
+                            {{page_data.blink&&page_data.blink.downloadDetail}}
+                        </div>
+                    </div>
+                </div>
+                <img @click="toAppStore('https://apps.apple.com/app/id1013961111')" src="./img/download.png" alt="">
+            </div>
+            <div style="text-align: center;">
+                <img style="height: 168px;" src="./img/blink_camera.png" alt="">
+            </div>
+            <div class="title">
+                {{page_data.blink&&page_data.blink.step1Title}}
+            </div>
+            <div class="detail">
+                {{page_data.blink&&page_data.blink.step1Detail}}
+            </div>
+
+            <div class="title">
+                {{page_data.blink&&page_data.blink.step2Title}}
+            </div>
+            <div class="detail">
+               {{page_data.blink&&page_data.blink.step2Detail}}
+            </div>
+
+            <div class="title">
+                {{page_data.blink&&page_data.blink.step3Title}}
+            </div>
+            <div class="detail">
+            {{page_data.blink&&page_data.blink.step3Detail}}
+            </div>
+
+            <div class="title">
+                {{page_data.blink&&page_data.blink.step4Title}}
+            </div>
+            <div class="detail" v-html="page_data.blink&&page_data.blink.step4Detail">
+                
+            </div>
+
+            <div class="title">
+                {{page_data.blink&&page_data.blink.step5Title}}
+            </div>
+            <div class="detail" v-html="page_data.blink&&page_data.blink.step5Detail">
+            </div>
+        </div>
+        <div v-else-if="brand=='wyze'">
+            <div class="download">
+                <div class="left">
+                    <img style="width: 64px;margin-right: 8px;border-radius: 16px;border: 1px solid rgba(0, 0, 0, 0.1);"
+                        src="./img/wyze_icon.png" alt="">
+                    <div>
+                        <div class="">
+                            Wyze - Make Your Home Smarter
+                        </div>
+                        <div class="bottom-detail">
+                            {{page_data.wyze&&page_data.wyze.downloadDetail}}
+                        </div>
+                    </div>
+                </div>
+                <img @click="toAppStore('https://apps.apple.com/app/id1288415553')" src="./img/download.png" alt="">
+            </div>
+            <div class="title">
+                {{page_data.wyze&&page_data.wyze.step1Title}}
+            </div>
+            <div class="detail">
+                {{page_data.wyze&&page_data.wyze.step1Detail}}
+            </div>
+            <div class="title">
+                {{page_data.wyze&&page_data.wyze.step2Title}}
+            </div>
+            <div class="detail">
+                {{page_data.wyze&&page_data.wyze.step2Detail}}
+            </div>
+            <div style="text-align: center;margin-bottom: 24px;">
+                <img style="width: 100%;max-width: 468px;" src="./img/wyze_screen.png" alt="">
+            </div>
+            <div class="title">
+                {{page_data.wyze&&page_data.wyze.step3Title}}
+            </div>
+            <div class="detail">
+                {{page_data.wyze&&page_data.wyze.step3Detail}}
+            </div>
+            <div class="title">
+                {{page_data.wyze&&page_data.wyze.step4Title}}
+            </div>
+            <div class="detail" style="margin-bottom:8px;">
+                {{page_data.wyze&&page_data.wyze.step4Detail1}}
+            </div>
+            <div class="detail" style="margin-bottom:8px;">
+                {{page_data.wyze&&page_data.wyze.step4Detail2}}
+            </div>
+            <div class="detail" style="margin-bottom:8px;">
+                {{page_data.wyze&&page_data.wyze.step4Detail3}}
+            </div>
+            <div class="detail" >
+                {{page_data.wyze&&page_data.wyze.step4Detail4}}
+            </div>
+            <div class="title">
+                {{page_data.wyze&&page_data.wyze.step5Title}}
+            </div>
+            <div class="detail">
+                {{page_data.wyze&&page_data.wyze.step5Detail}}
+            </div>
+            <div class="title">
+                {{page_data.wyze&&page_data.wyze.step6Title}}
+            </div>
+            <div class="detail">
+                {{page_data.wyze&&page_data.wyze.step6Detail}}
+            </div>
+            <div class="title">
+                {{page_data.wyze&&page_data.wyze.step7Title}}
+            </div>
+            <div class="detail">
+                {{page_data.wyze&&page_data.wyze.step7Detail}}
+            </div>
+
+            <div class="detail">
+                {{page_data.wyze&&page_data.wyze.step8Detail}}
+            </div>
+        </div>
+        <div v-else-if="brand=='yiiot'">
+            <div class="download">
+                <div class="left">
+                    <img style="width: 64px;margin-right: 8px;border-radius: 16px;border: 1px solid rgba(0, 0, 0, 0.1);"
+                        src="./img/yiiot_icon.png" alt="">
+                    <div>
+                        <div class="">
+                            YI IoT
+                        </div>
+                        <div class="bottom-detail">
+                            {{page_data.yiiot&&page_data.yiiot.downloadDetail}}
+                        </div>
+                    </div>
+                </div>
+                <img @click="toAppStore('https://apps.apple.com/app/id1375812275')" src="./img/download.png" alt="">
+            </div>
+            <div class="title">
+               {{page_data.yiiot&&page_data.yiiot.step1Title}}
+            </div>
+            <div class="detail">
+                {{page_data.yiiot&&page_data.yiiot.step1Detail}}
+            </div>
+            <div class="title">
+                {{page_data.yiiot&&page_data.yiiot.step2Title}}
+            </div>
+            <div class="detail">
+                {{page_data.yiiot&&page_data.yiiot.step2Detail}}
+            </div>
+            <div style="text-align: center;margin-bottom: 24px;">
+                <img style="width: 100%;max-width: 468px;" src="./img/yiiot_screen.png" alt="">
+            </div>
+
+            <div class="title">
+                {{page_data.yiiot&&page_data.yiiot.step3Title}}
+            </div>
+            <div class="detail">
+                {{page_data.yiiot&&page_data.yiiot.step3Detail}}
+            </div>
+            <div class="title">
+                {{page_data.yiiot&&page_data.yiiot.step4Title}}
+            </div>
+            <div class="detail">
+                {{page_data.yiiot&&page_data.yiiot.step4Detail}}
+            </div>
+            <div class="title">
+                {{page_data.yiiot&&page_data.yiiot.step5Title}}
+            </div>
+            <div class="sub-title">
+               {{page_data.yiiot&&page_data.yiiot.step5SubTitle1}}
+            </div>
+            <div class="detail" style="margin-bottom:8px;">
+               {{page_data.yiiot&&page_data.yiiot.step5Detail11}}
+            </div>
+            <div class="detail" style="margin-bottom:8px;">
+                {{page_data.yiiot&&page_data.yiiot.step5Detail12}}
+            </div>
+            <div class="detail">
+                {{page_data.yiiot&&page_data.yiiot.step5Detail13}}
+            </div>
+
+            <div class="sub-title">
+                {{page_data.yiiot&&page_data.yiiot.step5SubTitle2}}
+            </div>
+            <div class="detail" style="margin-bottom:8px;">
+                {{page_data.yiiot&&page_data.yiiot.step5Detail21}}
+            </div>
+            <div class="detail" style="margin-bottom:8px;">
+                {{page_data.yiiot&&page_data.yiiot.step5Detail22}}
+            </div>
+            <div class="detail">
+                {{page_data.yiiot&&page_data.yiiot.step5Detail23}}
+            </div>
+
+            <div class="sub-title">
+                {{page_data.yiiot&&page_data.yiiot.step5SubTitle3}} 
+            </div>
+            <div class="detail" style="margin-bottom:8px;">
+                {{page_data.yiiot&&page_data.yiiot.step5Detail31}}
+            </div>
+            <div class="detail" style="margin-bottom:8px;">
+                {{page_data.yiiot&&page_data.yiiot.step5Detail32}}
+            </div>
+            <div class="detail">
+                {{page_data.yiiot&&page_data.yiiot.step5Detail33}}
+            </div>
+
+            <div class="detail">
+                {{page_data.yiiot&&page_data.yiiot.step6Detail}}
+            </div>
+        </div>
+        <div v-else-if="brand=='arlo'">
+            <div class="download">
+                <div class="left">
+                    <img style="width: 64px;margin-right: 8px;border-radius: 16px;border: 1px solid rgba(0, 0, 0, 0.1);"
+                        src="./img/arlo_icon.png" alt="">
+                    <div>
+                        <div class="">
+                            Arlo Secure: Home Security
+                        </div>
+                        <div class="bottom-detail">
+                            {{page_data.arlo&&page_data.arlo.downloadDetail}}
+                        </div>
+                    </div>
+                </div>
+                <img @click="toAppStore('https://apps.apple.com/app/id1459289784')" src="./img/download.png" alt="">
+            </div>
+            <div style="text-align: center;margin-bottom: 24px;">
+                <img style="width:60%;max-width: 288px;" src="./img/arlo_camera.png" alt="">
+            </div>
+            <div class="title">
+                {{page_data.arlo&&page_data.arlo.step1Title}}
+            </div>
+            <div class="detail">
+                {{page_data.arlo&&page_data.arlo.step1Detail}}
+            </div>
+            <div style="text-align: center;margin-bottom: 24px;">
+                <img style="width: 100%;max-width: 468px;" src="./img/arlo_screen.png" alt="">
+            </div>
+            <div class="title">
+                {{page_data.arlo&&page_data.arlo.step2Title}}
+
+            </div>
+            <div class="detail">
+                {{page_data.arlo&&page_data.arlo.step2Detail}}
+
+            </div>
+
+            <div class="title">
+                {{page_data.arlo&&page_data.arlo.step3Title}}
+
+            </div>
+            <div class="detail">
+                {{page_data.arlo&&page_data.arlo.step3Detail}}
+            </div>
+            <div class="title">
+                {{page_data.arlo&&page_data.arlo.step4Title}}
+
+            </div>
+            <div class="detail" style="margin-bottom:8px;">
+                {{page_data.arlo&&page_data.arlo.step4Detail1}}
+            </div>
+            <div class="detail" style="margin-bottom:8px;">
+                {{page_data.arlo&&page_data.arlo.step4Detail2}}
+            </div>
+            <div class="detail" style="margin-bottom:8px;">
+                {{page_data.arlo&&page_data.arlo.step4Detail3}}
+            </div>
+            <div class="detail">
+                {{page_data.arlo&&page_data.arlo.step4Detail4}}
+            </div>
+            <div class="title">
+                {{page_data.arlo&&page_data.arlo.step5Title}}
+            </div>
+            <div class="detail" style="margin-bottom:8px;">
+                {{page_data.arlo&&page_data.arlo.step5Detail1}}
+            </div>
+            <div class="detail" style="margin-bottom:8px;">
+                {{page_data.arlo&&page_data.arlo.step5Detail2}}
+            </div>
+            <div class="detail">
+                {{page_data.arlo&&page_data.arlo.step5Detail3}}
+            </div>
+            <div class="title">
+                {{page_data.arlo&&page_data.arlo.step6Title}}
+            </div>
+            <div class="detail">
+                {{page_data.arlo&&page_data.arlo.step6Detail}}
+            </div>
+
+            <div class="detail">
+                {{page_data.arlo&&page_data.arlo.step7Detail}}
+            </div>
+            <div class="detail">
+                {{page_data.arlo&&page_data.arlo.step8Detail}}
+            </div>
+        </div>
+        <div v-else class="normal">
+            <div class="title">
+                {{page_data.normal&&page_data.normal.step1Title}}
+            </div>
+            <div class="detail">
+                {{page_data.normal&&page_data.normal.step1Detail}}
+            </div>
+            <div class="title">
+                {{page_data.normal&&page_data.normal.step2Title}}
+            </div>
+            <div class="detail">
+                {{page_data.normal&&page_data.normal.step2Detail}}
+            </div>
+            <div class="title">
+                {{page_data.normal&&page_data.normal.step3Title}}
+            </div>
+            <div v-html="page_data.normal&&page_data.normal.step3Detail" class="detail"></div>
+            <div class="title">
+                {{page_data.normal&&page_data.normal.step4Title}}
+            </div>
+            <div class="detail"  v-html="page_data.normal&&page_data.normal.step4Detail" ></div>
+            <div class="title">
+                {{page_data.normal&&page_data.normal.step5Title}}
+            </div>
+            <div class="detail"  v-html="page_data.normal&&page_data.normal.step5Detail" ></div>
+        </div>
+    </div>
+    <script type="module">
+        new Vue({
+            el: '#app',
+            data: {
+                navHeight:0,
+                brand: "arlo",
+                language: "",
+                page_data: {},
+                selected: 0,
+                titleObj: {
+                    tapo: "Tapo",
+                    yiiot: "YI IoT",
+                    wyze: "Wyze",
+                    arlo: "Arlo",
+                    blink: "Blink"
+                },
+                reason: "",
+                reasons: [
+                    {
+                        name: "价格太贵"
+                    },
+                    {
+                        name: "不是我想要的"
+                    },
+                    {
+                        name: "应用体验不好"
+                    },
+                    {
+                        name: "没有不满意"
+                    },
+                    {
+                        name: "功能太简单"
+                    },
+                    {
+                        name: "不会使用"
+                    },
+                    {
+                        name: "误购买"
+                    },
+                    {
+                        name: "我可能会在以后购买"
+                    }
+
+                ]
+            },
+            mounted() {
+                this.setAnimation()
+                this.setPageInfo()
+                this.brand = this.getQuery("src") || 'normal';
+            },
+            methods: {
+                setPageInfo() {
+                    let pageInfo = sessionStorage.getItem("pageInfo") && JSON.parse(sessionStorage.getItem("pageInfo")) || {}
+                    this.navHeight = pageInfo.navHeight || 0
+                    let language = pageInfo.language || 'en'
+                    this.language = this.getLanguage(language);
+                    this.page_data = locales[this.language]
+                },
+                toAppStore(url) {
+                    window.open(url)
+                },
+                setAnimation() {
+                    var view = document.getElementById("app")
+                    let type = this.getQuery('type')
+                    if (type == 'out') {
+                        view.className = "slide-out"
+                    } else if (type == 'in') {
+                        view.className = "slide-in"
+                    }
+                    setTimeout(() => {
+                        view.className = null
+                    }, 300);
+                },
+                back() {
+                    window.location.href = "./index.html?type=out"
+                },
+                install() {
+                    window.open("https://apps.apple.com/app/id6446840227")
+                },
+                getLanguage(language) {
+                    let targetLanguage = ''
+                    languageCodes.forEach((item) => {
+                        let language_index = language.indexOf(item)
+                        if (language_index != '-1') {
+                            targetLanguage = item
+                        }
+                    })
+                    if (targetLanguage) {
+                        return targetLanguage
+                    } else {
+                        return 'en'
+                    }
+                },
+                getQuery(name) {
+                    let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+                    let r = window.location.search.substr(1).match(reg);
+                    if (r != null) {
+                        // 对参数值进行解码
+                        return decodeURIComponent(r[2]);
+                    }
+                    return null;
+                },
+            }
+        })
+    </script>
+    <script>
+
+    </script>
+</body>
+
+</html>

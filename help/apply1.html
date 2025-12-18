@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <!-- <script src="./axios.js"></script> -->
+    <title></title>
+    <script src="./vue.min.js"></script>
+    <script src="./locale.js"></script>
+    <script src="./jquery.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+
+</head>
+<style>
+    /* 页面容器 */
+
+    /* 定义从左侧滑入的关键帧动画 */
+    @keyframes slideInFromRight {
+        from {
+            transform: translateX(100%);
+        }
+
+        to {
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes slideInFromLeft {
+        from {
+            transform: translateX(-100%);
+        }
+
+        to {
+            transform: translateX(0);
+        }
+    }
+
+
+    /* 应用滑入动画 */
+    .slide-in {
+        animation: slideInFromRight 0.2s ease-out forwards;
+        overflow-x: hidden;
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
+
+    .slide-out {
+        animation: slideInFromLeft 0.2s ease-out forwards;
+        overflow-x: hidden;
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        background: #F8F8F8;
+    }
+
+
+    #app {
+        box-sizing: border-box;
+        padding-bottom: calc(32px + constant(safe-area-inset-bottom));
+        padding-bottom: calc(32px + env(safe-area-inset-bottom));
+
+    }
+
+    .header {
+        padding: 16px;
+        background: #FFFFFF;
+        text-align: center;
+        position: fixed;
+        font-size: 17px;
+        font-family: SFPro, SFPro;
+        font-weight: 600;
+        color: #000000;
+        line-height: 22px;
+        left: 0;
+        top: 0;
+        width: 100%;
+        box-sizing: border-box;
+        z-index: 10;
+    }
+
+    .back {
+        position: absolute;
+        left: 8px;
+        bottom: 16px;
+        width: 24px;
+    }
+
+    .content {
+        padding: 0 16px;
+    }
+
+    .content>.list {
+        width: 100%;
+        background: #FFFFFF;
+        border-radius: 16px;
+        overflow: hidden;
+        padding-left: 16px;
+        box-sizing: border-box;
+        margin-bottom: 16px;
+    }
+
+    .content>.list>div {
+        padding: 13px 16px 13px 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .content>.list>div>.name {
+        font-size: 16px;
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 400;
+        color: rgba(0, 0, 0, 0.6);
+        line-height: 22px;
+        width: 120px;
+        text-align: left;
+    }
+
+    .content>.list>div>input {
+        border: 0;
+        text-align: right;
+        font-size: 16px;
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 400;
+        color: rgba(0, 0, 0, 0.8);
+        line-height: 22px;
+        width: calc(100% - 120px);
+        outline: none;
+    }
+
+    .content>.list>div>a {
+        font-size: 16px;
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 400;
+        color: #2D79FF;
+        line-height: 22px;
+        text-align: right;
+        text-decoration: none;
+    }
+
+    .content>.list>textarea {
+        border: 0;
+        text-align: left;
+        font-size: 16px;
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 400;
+        color: rgba(0, 0, 0, 0.8);
+        line-height: 22px;
+        width: 100%;
+        outline: none;
+        padding: 13px 0;
+        height: 70px;
+    }
+
+    .button {
+        width: calc(100% - 48px);
+        margin: 24px auto 0;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #2D79FF;
+        border-radius: 16px;
+        font-size: 17px;
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 600;
+        color: #FFFFFF;
+        line-height: 24px;
+    }
+
+    .button:active {
+        opacity: 0.9;
+    }
+
+    .toast {
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: 100;
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        background-color: #282828;
+    }
+
+    .toast>img {
+        max-width: calc(100% - 16px);
+
+        border-radius: 3px;
+    }
+
+    .loaderToast {
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: 10;
+    }
+
+    .loader {
+        z-index: 100;
+        position: fixed;
+        top: calc(48vh - 21px);
+        left: calc(50vw - 21px);
+        border: 6px solid #f3f3f3;
+        /* 浅灰色 */
+        border-top: 6px solid #2D79FF;
+        /* 蓝色 */
+        border-radius: 50%;
+        width: 36px;
+        /* 调整宽度 */
+        height: 36px;
+        /* 调整高度 */
+        animation: spin 2s linear infinite;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+
+<body>
+    <div id="app" :style="`padding-top:${70+navHeight}px`">
+        <div class="header" :style="`padding-top:${16+navHeight}px`">
+            <img @click="back" class="back" src="./img/back.png" alt="">
+            {{refundType=='refund'?page_data.refundTitle:page_data.cancelSubTitle}}
+        </div>
+        <div class="content">
+            <div class="list">
+                <div>
+                    <div class="name">
+                        {{page_data.firstName}}
+                    </div>
+                    <input v-model="body.firstName" type="text" :placeholder="page_data.firstName">
+                </div>
+                <div>
+                    <div class="name">
+                        {{page_data.lastName}}
+                    </div>
+                    <input v-model="body.lastName" type="text" :placeholder="page_data.lastName">
+                </div>
+                <div>
+                    <div class="name">
+                        {{page_data.email}}
+                    </div>
+                    <input v-model="body.email" type="text" placeholder="example@gmail.com">
+                </div>
+                <div>
+                    <div class="name">
+                        {{page_data.postCode}}
+                    </div>
+                    <input v-model="body.postCode" type="text" placeholder="000000">
+                </div>
+                <div style="border: 0;">
+                    <div class="name">
+                        {{page_data.area}}
+                    </div>
+                    <input v-model="body.area" type="text" placeholder="-">
+                </div>
+
+            </div>
+            <div class="list">
+                <div>
+                    <div class="name">
+                        {{page_data.purchaseDate}}
+                    </div>
+                    <input v-model="body.purchaseDate" type="text" id="myDatepicker"
+                        :placeholder="page_data.purchaseDate">
+                    <!-- <input v-model="body.purchaseDate" type="date" :placeholder="page_data.purchaseDate"> -->
+                </div>
+                <div>
+                    <div class="name">
+                        {{page_data.payAmount}}
+                    </div>
+                    <input v-model="body.payAmount" type="text" :placeholder="page_data.payAmount">
+                </div>
+                <div v-if="refundType == 'refund'">
+                    <div class="name">
+                        {{page_data.refundAmount}}
+                    </div>
+                    <input v-model="body.refundAmount" type="text" :placeholder="page_data.refundAmount">
+                </div>
+                <div style="border: 0;">
+                    <div class="name">
+                        {{page_data.screenShot}}
+                    </div>
+                    <a @click="upload" href="javascript:;">{{
+                        imageUrl?page_data.reUpoload:page_data.upload
+                        }}</a>
+                </div>
+                <div @click="showToast=true" v-if="imageUrl" :style="{
+                    background:`url(${imageUrl}) no-repeat center center/cover`,
+                }"
+                    style="width: calc(100% - 16px);margin:3px 0 16px;height:100px;padding:0;border: 0;border-radius: 5px;">
+                </div>
+            </div>
+            <div class="list">
+                <div>
+                    <div class="name" style="width: 100%;">
+                        {{refundType == 'refund'?page_data.refundReason:page_data.cancelReason}}
+                    </div>
+                </div>
+                <textarea v-model="body.reason"></textarea>
+            </div>
+
+            <div @click="toNext" class="button">
+                {{page_data.continue}}
+            </div>
+
+        </div>
+        <div @click="showToast=false" v-if="showToast" class="toast">
+            <img :src="imageUrl" alt="">
+        </div>
+        <div v-if="loading" class="loaderToast">
+            <div class="loader"></div>
+        </div>
+    </div>
+    <script type="module">
+        new Vue({
+            el: '#app',
+            data: {
+                baseUrl: "https://serve.dingyue.io",
+                headers: {
+                    "X-APP-ID": "9ba3ac48869c4e6485ce43ece65db8b5",
+                    "X-API-KEY": "eyJraWQiOiI0OGU4OGFjMzAzMzc0NDI2YWYyYzcxMTg0MjhlMmM3ZiIsInR5cCI6IkpXVCIsImFsZyI6IkhTNTEyIn0.eyJvd25lciI6ImdtYXBwcyIsImFwcF9uYW1lIjoi5pGE5YOP5aS0Ne-8iDExMe-8iSIsImlzcyI6IkZhclRlY2ggQXBwIENlbnRlciBTZXJ2aWNlIiwiZXhwIjo0ODQxOTY4NzQ0LCJpYXQiOjE2ODgzNjg3NDQsInVzZXIiOiI5YmEzYWM0ODg2OWM0ZTY0ODVjZTQzZWNlNjVkYjhiNSJ9.BGEkdxYtSRnMvNkwengk9BfH9TzpwKQkgUd3zoS2xom91-QpkWRZMQDaGJ9NHz3FptT9QQ7bMQZY2H4pqAJMRA",
+                    "X-PLATFORM": "ios",
+                },
+                loading: false,
+                showToast: false,
+                page_data: {},
+                body: {
+                    firstName: "",
+                    lastName: "",
+                    email: "",
+                    postCode: "",
+                    area: "",
+                    reason: "",
+                    purchaseDate: "",
+                    refundAmount: "",
+                    payAmount: "",
+                },
+                file: null,
+                imageUrl: null,
+                language: "",
+                uuid: "",
+                appId: "",
+                navHeight: 0,
+                refundType: "refund"
+            },
+            mounted() {
+                this.refundType = this.getQuery('refundType') || "refund"
+                this.setPageInfo()
+                this.setAnimation()
+            },
+            methods: {
+                setDefaultDate(date) {
+                    $("#myDatepicker").flatpickr({
+                        dateFormat: "Y-m-d",
+                        defaultDate: date,
+                    });
+                },
+                setPageInfo() {
+                    let pageInfo = sessionStorage.getItem("pageInfo") && JSON.parse(sessionStorage.getItem("pageInfo")) || {}
+                    this.navHeight = pageInfo.navHeight
+                    this.uuid = pageInfo.uuid;
+                    this.appId = pageInfo.appId;
+                    this.language = this.getLanguage(pageInfo.language || 'en');
+                    this.page_data = {
+                        ...locales[this.language],
+                        ...addLocales[this.language]
+                    }
+                    document.title = this.page_data.refundTitle;
+                    this.getOrderInfo(this.appId, this.uuid)
+                },
+                // 网络请求方法
+                require(url, method, data = null) {
+                    return new Promise((resolve, reject) => {
+                        $.ajax({
+                            url: this.baseUrl + url,
+                            method: method || 'get',
+                            data: JSON.stringify(data),
+                            contentType: "application/json",
+                            headers: {
+                                ...this.headers,
+                                "X-USER-ID": this.uuid || "default",
+                            },
+                            success: (res) => {
+                                resolve(res);
+                            },
+                            error: (res) => {
+                                reject(res);
+                            }
+                        });
+                    });
+                },
+                uploadImage(file) {
+                    return new Promise((resolve, reject) => {
+                        resolve("https://file.dingyue.io/image/ios/9ba3ac48869c4e6485ce43ece65db8b5/default1708589666321.png")
+                        //     var formData = new FormData();
+                        //     formData.append('file', file);
+                        //     $.ajax({
+                        //         url: this.baseUrl + '/file/upload',
+                        //         method: 'post',
+                        //         data: formData,
+                        //         contentType: false,
+                        //         processData: false,
+                        //         headers: {
+                        //             ...this.headers,
+                        //             "X-USER-ID": this.uuid||"default",
+                        //         },
+                        //         success: (res) => {
+                        //             if(res.status=="ok"){
+                        //                 resolve(res.url);
+                        //             }else{
+                        //                 reject(res);
+                        //             }
+                        //         },
+                        //         error: (res) => {
+                        //             reject(res);
+                        //         }
+                        //     });
+                    });
+
+                },
+                getOrderInfo(appId, uuid) {
+                    this.require('/info/order?appId='+this.appId+"&uuid="+this.uuid, 'get').then((res) => {
+                        if (res.status == 'ok') {
+                            this.body.purchaseDate = this.getDateStr(res.purchaseDate)
+                            this.body.payAmount = res.payAmount
+                            this.setDefaultDate(res.purchaseDate)
+                        } else {
+                            this.body.purchaseDate = this.getDateStr(Date.now())
+                            this.setDefaultDate(Date.now())
+                        }
+                    }).catch((error) => {
+                        this.body.purchaseDate = this.getDateStr(Date.now())
+                        this.setDefaultDate(Date.now())
+                    })
+                },
+                createFileInput() {
+                    var fileInput = document.getElementById('fileInput');
+                    if (!fileInput) {
+                        fileInput = document.createElement('input');
+                        fileInput.id = 'fileInput';
+                        fileInput.type = 'file';
+                        fileInput.style.display = 'none';
+                        fileInput.accept = 'image/*'; // 只允许选择图片文件
+                        document.body.appendChild(fileInput);
+                        fileInput.addEventListener('change', (event) => {
+                            this.handleFileChange(event);
+                        });
+                    }
+                    fileInput.click();
+                },
+                handleFileChange(event) {
+                    this.file = event.target.files[0];
+                    this.show = this.file + '';
+                    this.imageUrl = URL.createObjectURL(this.file); // 将选择的图片转换为 URL
+                },
+                upload() {
+                    this.createFileInput()
+                },
+                async toNext() {
+                    if (!this.body.email) {
+                        alert(this.page_data.emailToast)
+                        return
+                    } else {
+                        this.loading = true
+                        let paymentScreenshotUrl
+                        if (this.file) {
+                            try {
+                                paymentScreenshotUrl = await this.uploadImage(this.file)
+                            } catch (error) {
+                                alert(this.page_data.uploadFail)
+                                return
+                            }
+                        }
+                        let data = {
+                            appId: this.appId||"",
+                            uuid: this.uuid||"",
+                            platform: "ios",
+                            refundInfo: {
+                                type: this.refundType || "refund",
+                                firstName: this.body.firstName,
+                                lastName: this.body.lastName,
+                                email: this.body.email,
+                                postCode: this.body.postCode,
+                                area: this.body.area,
+                                purchaseDate: this.body.purchaseDate ? new Date(this.body.purchaseDate).getTime() : Date.now(),
+                                payAmount: this.body.payAmount,
+                                reasonsForRefund: this.body.reason
+                            }
+                        }
+                        if (this.refundType == 'refund') {
+                            data.refundInfo.refundAmount = this.body.refundAmount
+                        }
+                        if (paymentScreenshotUrl) {
+                            data.refundInfo.paymentScreenshotUrl = paymentScreenshotUrl
+                        }
+                        let result = await this.require('/inApp/refund/apply', 'post', data)
+                        this.loading = false
+                        if (result.status == "ok") {
+                            console.log(result);
+                            window.location.href = "./apply2.html?type=in&workOrderKey=" + result.workOrderKey
+                        } else {
+                            alert(page_data.submitFail)
+                        }
+                    }
+                },
+                setAnimation() {
+                    var view = document.getElementById("app")
+                    let type = this.getQuery('type')
+                    if (type == 'out') {
+                        view.className = "slide-out"
+                    } else if (type == 'in') {
+                        view.className = "slide-in"
+                    }
+                    setTimeout(() => {
+                        view.className = null
+                    }, 300);
+                },
+                back() {
+                    window.location.href = "./detail.html?type=out"
+                },
+                install() {
+                    window.open("https://apps.apple.com/app/id6446840227")
+                },
+                getDateStr(ts) {
+                    let date = new Date(ts);
+                    // const year = date.getFullYear();
+                    // const isCurrentYear = year === new Date().getFullYear();
+                    // if (isCurrentYear) {
+                    //     return this.formatDate(date, "MM-DD hh:mm:ss")
+                    // } else {
+                    //     return this.formatDate(date, "YYYY-MM-DD hh:mm")
+                    // }
+                    return this.formatDate(date, "YYYY-MM-DD")
+                },
+                formatDate(date, format) {
+                    const year = date.getFullYear();
+                    const month = (date.getMonth() + 1 + "").padStart(2, "0");
+                    const day = (date.getDate() + "").padStart(2, "0");
+                    const hour = (date.getHours() + "").padStart(2, "0");
+                    const minute = (date.getMinutes() + "").padStart(2, "0");
+                    const second = (date.getSeconds() + "").padStart(2, "0");
+                    return format
+                        .replace("YYYY", year)
+                        .replace("MM", month)
+                        .replace("DD", day)
+                        .replace("hh", hour)
+                        .replace("mm", minute)
+                        .replace("ss", second);
+                },
+                getLanguage(language) {
+                    let targetLanguage = ''
+                    languageCodes.forEach((item) => {
+                        let language_index = language.indexOf(item)
+                        if (language_index != '-1') {
+                            targetLanguage = item
+                        }
+                    })
+                    if (targetLanguage) {
+                        return targetLanguage
+                    } else {
+                        return 'en'
+                    }
+                },
+
+                getQuery(name) {
+                    let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+                    let r = window.location.search.substr(1).match(reg);
+                    if (r != null) {
+                        // 对参数值进行解码
+                        return decodeURIComponent(r[2]);
+                    }
+                    return null;
+                },
+            }
+        })
+    </script>
+</body>
+
+</html>

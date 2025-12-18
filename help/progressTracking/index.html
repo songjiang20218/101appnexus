@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="../favicon.ico" />
+    <!-- <script src="./axios.js"></script> -->
+    <title>退订/退款追踪</title>
+    <script src="../vue.min.js"></script>
+    <script src="../locale.js"></script>
+    <script src="../jquery.js"></script>
+</head>
+<style>
+    /* 页面容器 */
+
+    /* 定义从左侧滑入的关键帧动画 */
+    @keyframes slideInFromRight {
+        from {
+            transform: translateX(100%);
+        }
+
+        to {
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes slideInFromLeft {
+        from {
+            transform: translateX(-100%);
+        }
+
+        to {
+            transform: translateX(0);
+        }
+    }
+
+
+    /* 应用滑入动画 */
+    .slide-in {
+        animation: slideInFromRight 0.2s ease-out forwards;
+        overflow-x: hidden;
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
+
+    .slide-out {
+        animation: slideInFromLeft 0.2s ease-out forwards;
+        overflow-x: hidden;
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        background: #F8F8F8;
+    }
+
+
+    #app {
+        box-sizing: border-box;
+        height: 100vh;
+        padding-bottom: calc(32px + constant(safe-area-inset-bottom));
+        padding-bottom: calc(32px + env(safe-area-inset-bottom));
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+        margin-top: -10vh;
+    }
+
+    .title {
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 600;
+        font-size: 21px;
+        color: #000000;
+        line-height: 29px;
+        text-align: center;
+        font-style: normal;
+        margin: 0 auto 10px;
+        width: calc(100% - 88px);
+    }
+
+    .detail {
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 400;
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.7);
+        line-height: 20px;
+        text-align: center;
+        font-style: normal;
+        margin: 0 auto 40px;
+        width: calc(100% - 88px);
+    }
+
+    .input-area {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: calc(100% - 32px);
+        margin: 0 auto 70px;
+        background: #FFFFFF;
+        border-radius: 16px;
+        padding: 13px 16px;
+        box-sizing: border-box;
+    }
+
+    .input-area>div {
+        width: 120px;
+        text-align: left;
+    }
+
+    .input-area>input {
+        outline: none;
+        border: 0;
+        text-align: right;
+        width: calc(100% - 120px);
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 400;
+        font-size: 16px;
+        color: rgba(0, 0, 0, 1);
+        line-height: 22px;
+        font-style: normal;
+    }
+
+    .button {
+        width: calc(100% - 48px);
+        margin: 24px auto 0;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #2D79FF;
+        border-radius: 16px;
+        font-size: 17px;
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 600;
+        color: #FFFFFF;
+        line-height: 24px;
+    }
+
+    .button:active {
+        opacity: 0.9;
+    }
+</style>
+
+<body>
+    <!-- -->
+    <div id="app" :style="`padding-top:${70}px`">
+        <div style="text-align: center;">
+            <img style="width: 88px;margin-bottom: 32px;" src="../img/progress.png" alt="">
+            <div class="title">
+                {{page_data.tracking}}
+            </div>
+            <div class="detail">
+                {{page_data.trackingDetail}}
+            </div>
+            <div class="input-area">
+                <div>{{page_data.trackingWorderId}}</div>
+                <input :placeholder="page_data.trackingWorderIdPlaceholder" v-model="workOrderKey" type="text">
+            </div>
+            <div @click="query" class="button">
+                {{page_data.query}}
+            </div>
+        </div>
+    </div>
+    <script type="module">
+        new Vue({
+            el: '#app',
+            data: {
+                baseUrl: "https://serve.dingyue.io",
+                headers: {
+                    "X-APP-ID": "9ba3ac48869c4e6485ce43ece65db8b5",
+                    "X-API-KEY": "eyJraWQiOiI0OGU4OGFjMzAzMzc0NDI2YWYyYzcxMTg0MjhlMmM3ZiIsInR5cCI6IkpXVCIsImFsZyI6IkhTNTEyIn0.eyJvd25lciI6ImdtYXBwcyIsImFwcF9uYW1lIjoi5pGE5YOP5aS0Ne-8iDExMe-8iSIsImlzcyI6IkZhclRlY2ggQXBwIENlbnRlciBTZXJ2aWNlIiwiZXhwIjo0ODQxOTY4NzQ0LCJpYXQiOjE2ODgzNjg3NDQsInVzZXIiOiI5YmEzYWM0ODg2OWM0ZTY0ODVjZTQzZWNlNjVkYjhiNSJ9.BGEkdxYtSRnMvNkwengk9BfH9TzpwKQkgUd3zoS2xom91-QpkWRZMQDaGJ9NHz3FptT9QQ7bMQZY2H4pqAJMRA",
+                    "X-PLATFORM": "ios",
+                },
+                workOrderKey: "",
+                language: "",
+                page_data: {},
+            },
+            mounted() {
+                this.setPageInfo()
+            },
+            methods: {
+                query() {
+                    if (this.workOrderKey) {
+                        window.location.href = `./result.html?workOrderKey=${this.workOrderKey}&type=in`
+                    } else {
+                        alert(this.page_data.trackingWorderIdPlaceholder)
+                    }
+                },
+                // 网络请求方法
+                require(url, method, data = null) {
+                    return new Promise((resolve, reject) => {
+                        $.ajax({
+                            url: this.baseUrl + url,
+                            method: method || 'get',
+                            data: JSON.stringify(data),
+                            contentType: "application/json",
+                            headers: {
+                                ...this.headers,
+                                "X-USER-ID": this.uuid || "default",
+                            },
+                            success: (res) => {
+                                resolve(res);
+                            },
+                            error: (res) => {
+                                reject(res);
+                            }
+                        });
+                    });
+                },
+                setPageInfo() {
+                    this.language = this.getLanguage(navigator.language || navigator.userLanguage || "en")
+                    this.page_data = {
+                        ...locales[this.language],
+                        ...addLocales[this.language]
+                    }
+                    document.title = this.page_data.tracking;
+                },
+                getDateStr(ts) {
+                    let date = new Date(ts);
+                    const year = date.getFullYear();
+                    const isCurrentYear = year === new Date().getFullYear();
+                    if (isCurrentYear) {
+                        return this.formatDate(date, "MM-DD hh:mm:ss")
+                    } else {
+                        return this.formatDate(date, "YYYY-MM-DD hh:mm")
+                    }
+                },
+                formatDate(date, format) {
+                    const year = date.getFullYear();
+                    const month = (date.getMonth() + 1 + "").padStart(2, "0");
+                    const day = (date.getDate() + "").padStart(2, "0");
+                    const hour = (date.getHours() + "").padStart(2, "0");
+                    const minute = (date.getMinutes() + "").padStart(2, "0");
+                    const second = (date.getSeconds() + "").padStart(2, "0");
+                    return format
+                        .replace("YYYY", year)
+                        .replace("MM", month)
+                        .replace("DD", day)
+                        .replace("hh", hour)
+                        .replace("mm", minute)
+                        .replace("ss", second);
+                },
+                getLanguage(language) {
+                    if (language == 'zh-CN') {
+                        return 'zh-Hans'
+                    } else if (language == 'zh-TW' || language == 'zh-HK') {
+                        return 'zh-Hant'
+                    } else {
+                        let targetLanguage = ''
+                        languageCodes.forEach((item) => {
+                            let language_index = language.indexOf(item)
+                            if (language_index != '-1') {
+                                targetLanguage = item
+                            }
+                        })
+                        if (targetLanguage) {
+                            return targetLanguage
+                        } else {
+                            return 'en'
+                        }
+                    }
+
+                },
+
+                getQuery(name) {
+                    let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+                    let r = window.location.search.substr(1).match(reg);
+                    if (r != null) {
+                        // 对参数值进行解码
+                        return decodeURIComponent(r[2]);
+                    }
+                    return null;
+                },
+            }
+        })
+    </script>
+    <script>
+
+    </script>
+</body>
+
+</html>

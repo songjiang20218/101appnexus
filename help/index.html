@@ -2,525 +2,425 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, target-densitydpi=device-dpi" />
-    <title>Help</title>
-    <script src="./vue.min.js"></script>
-    <script src='./locales.js' type="text/javascript"></script>
-    <style scoped>
-        body {
-            margin: 0;
-            padding: 0;
-
-        }
-
-        .settings {
-            min-height: 100vh;
-            width: 100%;
-            background: #F7F7F7;
-            /* 750rpx / 2 */
-            padding-bottom: 32px;
-            box-sizing: border-box;
-        }
-
-        .back {
-            width: 24px;
-            position: fixed;
-            left: 10px;
-            z-index: 10;
-        }
-
-        .bg {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            /* 750rpx / 2 */
-            /* background: url('./img/bg@3x.png') no-repeat 0 0/cover; */
-            z-index: 1;
-            height: 100vh;
-            background: linear-gradient(to bottom, rgba(247, 247, 247, 0) 0px, #F7F7F7 350px, #F7F7F7 100vh);
-        }
-
-
-
-        .title {
-            font-family: SF Pro, SF Pro;
-            font-weight: 600;
-            font-size: 22px;
-            color: #000000;
-            line-height: 28px;
-            text-align: left;
-            font-style: normal;
-            margin: 0 16px 8px;
-            padding-top: 162px;
-            position: relative;
-            z-index: 2;
-            /* -168rpx / 2, 32rpx / 2 */
-        }
-
-        .detail {
-            padding: 0 16px;
-            /* 32rpx / 2 */
-            font-family: PingFang HK, PingFang HK;
-            font-weight: 400;
-            font-size: 13px;
-            color: rgba(0, 0, 0, 0.87);
-            line-height: 15px;
-            text-align: left;
-            margin-bottom: 16px;
-            position: relative;
-            z-index: 2;
-            /* 32rpx / 2 */
-        }
-
-        .second {
-            width: calc(100% - 32px);
-            box-sizing: border-box;
-            background: #FFFFFF;
-            box-shadow: 0px 3px 12px 0px rgba(0, 0, 0, 0.05);
-            position: relative;
-            z-index: 2;
-        }
-
-        .stepTitle {
-            text-align: left;
-            margin-bottom: 16px;
-            font-family: SFPro, SFPro;
-            font-weight: 500;
-            font-size: 16px;
-            color: #000000;
-            line-height: 24px;
-            letter-spacing: 0.5px;
-        }
-
-        .line {
-            width: 40%;
-            height: 1px;
-            position: absolute;
-            background: linear-gradient(90deg, rgba(55, 58, 244, 0.2), rgba(241, 207, 255, 1), rgba(55, 58, 244, 0.2));
-            left: 30%;
-        }
-
-        .list {
-            width: calc(100% - 32px);
-            margin-left: 16px;
-            border-radius: 16px;
-            padding: 16px 16px 28px 16px;
-            box-sizing: border-box;
-            background: #FFFFFF;
-            box-shadow: 0px 3px 12px 0px rgba(0, 0, 0, 0.05);
-            position: relative;
-            margin-bottom: 16px;
-            z-index: 2;
-            /* 32rpx / 2 */
-        }
-
-        .item {
-            display: flex;
-            justify-content: space-around;
-            padding-bottom: 16px;
-            /* 24rpx / 2 */
-            position: relative;
-        }
-
-        .left-line {
-            position: absolute;
-            width: 1.5px;
-            /* 3rpx / 2 */
-            height: 100%;
-            left: 7.25px;
-            /* 14.5rpx / 2 */
-            top: 2px;
-            /* 4rpx / 2 */
-            background: rgba(255, 230, 215, 1);
-        }
-
-        .left {
-            width: 32px;
-            /* 64rpx / 2 */
-            position: relative;
-        }
-
-        .left img {
-            width: 16px;
-            /* 32rpx / 2 */
-            margin-top: 2px;
-            /* 4rpx / 2 */
-        }
-
-        .right {
-            /* width: calc(100% - 32px); */
-            width: 100%;
-            /* 64rpx / 2 */
-        }
-
-        .list-title {
-            margin-bottom: 4px;
-            font-family: SFPro, SFPro;
-            font-weight: 400;
-            font-size: 14px;
-            color: #000000;
-            line-height: 16px;
-            text-align: left;
-            letter-spacing: 0.6px;
-
-            /* 8rpx / 2 */
-        }
-
-        .list-title img {
-            width: 20px;
-            /* 40rpx / 2 */
-            height: 20px;
-            /* 40rpx / 2 */
-            margin-top: -5px;
-            /* -10rpx / 2 */
-            margin-left: 1px;
-            /* 2rpx / 2 */
-            vertical-align: middle;
-        }
-
-        .list-title img:active {
-            opacity: 0.8;
-        }
-
-        .rotatable {
-            transition: transform 0.3s ease-in-out;
-        }
-
-        .rotated {
-            transform: rotate(180deg);
-        }
-
-        .list-detail {
-            /* background: rgba(255, 230, 215, 0.2); */
-            border-radius: 4px;
-            /* 8rpx / 2 */
-            text-align: left;
-            transition: all 0.3s linear;
-            overflow: hidden;
-            letter-spacing: 0.6px;
-            max-height: 76px;
-            /* 152rpx / 2 */
-        }
-
-        .list-detail div {
-            /* padding: 10px; */
-            /* 20rpx / 2 */
-            font-family: PingFang HK, PingFang HK;
-            font-weight: 400;
-            font-size: 12px;
-            color: rgba(0, 0, 0, 0.50);
-            line-height: 16px;
-        }
-
-        .last {
-            position: relative;
-            z-index: 2;
-            width: calc(100% - 32px);
-            /* 64rpx / 2 */
-            margin-left: 16px;
-            /* 32rpx / 2 */
-            border-radius: 16px;
-            /* 32rpx / 2 */
-            padding: 16px 16px 28px 16px;
-            /* 32rpx / 2 */
-            box-sizing: border-box;
-            font-family: PingFang HK, PingFang HK;
-            font-weight: 400;
-            font-size: 15px;
-            color: #000000;
-            line-height: 18px;
-            text-align: left;
-            background: #FFFFFF;
-            box-shadow: 0px 3px 12px 0px rgba(0, 0, 0, 0.05);
-            position: relative;
-        }
-
-        .bottom {
-            margin-top: 8px;
-            /* 16rpx / 2 */
-            text-align: center;
-            display: flex;
-            align-items: center;
-        }
-
-        .bottom div {
-            margin: 0 4px;
-            font-family: SFPro, SFPro;
-            font-weight: 400;
-            font-size: 16px;
-            color: #000000;
-            line-height: 24px;
-            text-align: left;
-            font-style: normal;
-        }
-
-        .bottom span {
-            text-decoration-line: underline;
-            font-family: SFPro, SFPro;
-            font-weight: 500;
-            font-size: 15px;
-            line-height: 24px;
-            color: #2D79FF;
-        }
-
-        .bottom span:active {
-            opacity: 0.8;
-        }
-
-        .progress {
-            width: 100%;
-            height: 12px;
-            background: rgba(45, 121, 255, 0.2);
-            border-radius: 6px;
-            margin-bottom: 10px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .progress>.num {
-            position: absolute;
-            left: calc(33.33% - 12px);
-            top: 0;
-            font-size: 10px;
-            line-height: 12px;
-            background: #FFFFFF;
-            border-radius: 50%;
-            width: 12px;
-            color: rgba(45, 121, 255, 1);
-            z-index: 1;
-            text-align: center;
-        }
-
-        .progress>.color {
-            width: calc(33.33% - 6px);
-            height: 100%;
-            position: absolute;
-            left: 0;
-            top: 0;
-            background: rgba(45, 121, 255, 1);
-
-        }
-    </style>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <!-- <script src="./axios.js"></script> -->
+  <title>Help</title>
+  <script src="./vue.min.js"></script>
+  <script src="./locale.js"></script>
 </head>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background: #F8F8F8;
+  }
+
+  /* 定义从左侧滑入的关键帧动画 */
+  @keyframes slideInFromRight {
+    from {
+      transform: translateX(100%);
+    }
+
+    to {
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideInFromLeft {
+    from {
+      transform: translateX(-100%);
+    }
+
+    to {
+      transform: translateX(0);
+    }
+  }
+
+  /* 应用滑入动画 */
+  .slide-in {
+    animation: slideInFromRight 0.2s ease-out forwards;
+    overflow-x: hidden;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+
+  .slide-out {
+    animation: slideInFromLeft 0.2s ease-out forwards;
+    overflow-x: hidden;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+
+  #app {
+    box-sizing: border-box;
+    padding-bottom: calc(36px + constant(safe-area-inset-bottom));
+    padding-bottom: calc(36px + env(safe-area-inset-bottom));
+  }
+
+  .header {
+    padding: 16px;
+    background: #FFFFFF;
+    text-align: center;
+    position: fixed;
+    font-size: 17px;
+    font-family: SFPro, SFPro;
+    font-weight: 600;
+    color: #000000;
+    line-height: 22px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    box-sizing: border-box;
+
+    z-index: 10;
+  }
+
+  .back {
+    position: absolute;
+    left: 8px;
+    bottom: 16px;
+    width: 24px;
+  }
+
+
+  .list {
+    background-color: #FFFFFF;
+  }
+
+  .list>div {
+    padding-left: 16px;
+  }
+
+  .list>div:active {
+    background-color: rgba(0, 0, 0, 0.07);
+  }
+
+  .list-item {
+    padding: 10px 12px 10px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .list-item>img {
+    width: 24px;
+  }
+
+  .cameras {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #FFFFFF;
+    margin-bottom: 16px;
+  }
+
+  .cameras>.item {
+    padding: 16px;
+    width: 50%;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    text-align: center;
+  }
+
+  /* 选择偶数行 */
+  .cameras>.item:nth-child(even) {
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  /* 选择奇数列 */
+  .cameras>.item:nth-child(odd) {
+    border-right: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .cameras>.item>img {
+    width: 64px;
+  }
+
+  .cameras>.item>div {
+    font-size: 17px;
+    font-family: PingFangSC, PingFang SC;
+    font-weight: 400;
+    color: #000000;
+    line-height: 24px;
+    margin-top: 10px;
+  }
+
+  /* 选择某个元素的倒数第二个子元素 */
+  .cameras>:nth-last-child(2),
+  .cameras>:nth-last-child(1) {
+    /* 添加样式 */
+    border-bottom: 0;
+  }
+
+  .desc {
+    padding: 0 16px;
+    margin-bottom: 16px;
+  }
+
+  .desc>.title {
+    font-size: 16px;
+    font-family: PingFangSC, PingFang SC;
+    font-weight: 600;
+    color: #000000;
+    line-height: 22px;
+    margin-bottom: 8px;
+  }
+
+  .desc>.detail {
+    font-size: 12px;
+    font-family: PingFangSC, PingFang SC;
+    font-weight: 400;
+    color: rgba(0, 0, 0, 0.7);
+    line-height: 17px;
+  }
+</style>
 
 <body>
-    <div id="app" class="settings">
-        <img :style="{top: top + 'px'}" @click="back" class="back" src="./img/back@3x.png" alt="Back" />
-        <div class="bg"></div>
-        <img style="width:100%;position: absolute;left: 0;top: 0;" src="./img/bg@3x.png"
-            alt="Help New" />
-        <div class="title">
-            {{ helpNew.title1 }} <br>
-            {{ helpNew.title2 }}
-        </div>
-        <div class="detail">
-            {{ helpNew.detail }}
-        </div>
-
-        <div class="list">
-            <div class="stepTitle"> {{ helpNew.stepTitle }}</div>
-            <!-- <div class="line" style="top:0"></div>
-            <div class="line" style="bottom:0"></div> -->
-            <div class="item">
-                <!-- <div class="left-line"></div>
-                <div class="left">
-                    <img src="./img/radio@3x.png" alt="Radio" />
-                </div> -->
-                <div class="right">
-                    <div class="progress">
-                        <div class="num">1</div>
-                        <div class="color"></div>
-                    </div>
-                    <div class="list-title">
-                        {{helpNew.step1Title }}
-                        <img :class="{rotated: rotated1}" @click="rotated1 = !rotated1" class="rotatable"
-                            src="./img/jiantou@3x.png" alt="Arrow" />
-                    </div>
-                    <div class="list-detail" :style="rotated1 ? 'max-height:0;' : ''">
-                        <div>{{ helpNew.step1Detail }}</div>
-                    </div>
-                </div>
-            </div>
-            <div class="item">
-                <!-- <div class="left-line"></div>
-                <div class="left">
-                    <img src="./img/radio@3x.png" alt="Radio" />
-                </div> -->
-                <div class="right">
-                    <div class="progress">
-                        <div class="num">1</div>
-                        <div class="num" style="left: calc(66.66% - 12px);">2</div>
-                        <div class="color" style="width: calc(66.66% - 6px);"></div>
-                    </div>
-
-                    <div class="list-title">
-                        {{ helpNew.step2Title }}
-                        <img :class="{rotated: rotated2}" @click="rotated2 = !rotated2" class="rotatable"
-                            src="./img/jiantou@3x.png" alt="Arrow" />
-                    </div>
-                    <div class="list-detail" :style="rotated2 ? 'max-height:0;' : ''">
-                        <div>{{helpNew.step2Detail }}</div>
-                    </div>
-                </div>
-            </div>
-            <div class="item" style="padding-bottom:0">
-                <!-- <div class="left">
-                    <img src="./img/radio@3x.png" alt="Radio" />
-                </div> -->
-                <div class="right">
-                    <div class="progress">
-                        <div class="num">1</div>
-                        <div class="num" style="left: calc(66.66% - 12px);">2</div>
-                        <div class="num" style="left: calc(100% - 12px);">3</div>
-                        <div class="color" style="width: calc(100% - 6px);"></div>
-                    </div>
-
-                    <div class="list-title">
-                        {{ helpNew.step3Title }}
-                        <img :class="{rotated: rotated3}" @click="rotated3 = !rotated3" class="rotatable"
-                            src="./img/jiantou@3x.png" alt="Arrow" />
-                    </div>
-                    <div class="list-detail" :style="rotated3 ? 'max-height:0;' : ''">
-                        <div>{{ helpNew.step3Detail }}</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="last">
-            <!-- <div class="line" style="top:0;left:40%"></div>
-            <div class="line" style="bottom:0;left:20%"></div> -->
-            {{ helpNew.last1 }}
-            <div class="bottom">
-                <span @click="sendEmail">{{helpNew.last2}}</span>
-                <!-- <div>
-                    {{ $t('last3') }}
-                </div> -->
-                <!-- <span @click="viewQuestion">{{ $t('last4') }}</span> -->
-            </div>
-        </div>
+  <!-- -->
+  <div id="app" :style="`padding-top:${70+navHeight}px`" :class="slideType=='out'?'slide-out':''">
+    <div class="header" :style="`padding-top:${16+navHeight}px`">
+      <img @click="back" class="back" src="./img/back.png" alt="">
+      {{page_data.help}}
     </div>
-
-    <script>
-        new Vue({
-            el: '#app',
-            data: {
-                top: 8, // Adjust this value as needed
-                rotated1: false,
-                rotated2: false,
-                rotated3: false,
-                top: 44,
-                language: "en",
-                helpNew: {},
-                defaultData: {
-                    "title1": "Don't Worry! ",
-                    "title2": "Let's Solve This Together!",
-                    "detail": "We have helped over 10 million users solve their problems. For screen mirroring issues, we are confident that we can assist you.",
-                    "stepTitle": "Over 82% of users successfully resolved camera connection issues using these three steps:",
-                    "step1Title": "Make sure the camera is connected to Wi-Fi.",
-                    "step1Detail": "Go to Settings > Wi-Fi > Select and connect to an available network.",
-                    "step2Title": "Make sure your camera device is on the same Wi-Fi network",
-                    "step2Detail": "Restart your screen casting device to connect it to Wi-Fi.",
-                    "step3Title": "Make sure the camera is powered on and ready.",
-                    "step3Detail": "Ensure the camera is turned on and not connected to another mobile device",
-                    "last1": "If your issue remains unresolved, please feel free to contact us for further assistance.",
-                    "last2": "Send Email"
-                },
-                languageCodes: [
-                    "ar",
-                    "ca",
-                    "cs",
-                    "da",
-                    "de",
-                    "el",
-                    "en",
-                    "es",
-                    "fi",
-                    "fr",
-                    "he",
-                    "hi",
-                    "hr",
-                    "hu",
-                    "id",
-                    "it",
-                    "ja",
-                    "ko",
-                    "ms",
-                    "nb",
-                    "nl",
-                    "pl",
-                    "pt",
-                    "ro",
-                    "ru",
-                    "sk",
-                    "sv",
-                    "th",
-                    "tr",
-                    "uk",
-                    "vi",
-                    "zh-Hans",
-                    "zh-Hant",
-                ]
-            },
-            beforeMount() {
-                window.iostojs = this.iostojs;
-            },
-            mounted() {
-                this.getInfo()
-            },
-            methods: {
-                getInfo() {
-                    this.helpNew = locales[this.language]
-                },
-                getCode(language) {
-                    let targetLanguage = ''
-                    this.languageCodes.forEach((item) => {
-                        let language_index = language.indexOf(item)
-                        if (language_index != '-1') {
-                            targetLanguage = item
-                        }
-                    })
-                    if (targetLanguage) {
-                        return targetLanguage
-                    } else {
-                        return 'en'
-                    }
-                },
-                decode(str) {
-                    return decodeURIComponent(atob(str).split('').map(function (c) {
-                        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-                    }).join(''));
-                },
-                // ios调用js入口
-                iostojs(action) {
-                    let json = JSON.parse(this.decode(action));
-                    this.language = this.getCode(json.system_language);
-                    this.helpNew = locales[this.language] || this.defaultData
-                    this.$forceUpdate();
-                    return (
-                        'ok'
-                    )
-                },
-                back() {
-                    console.log('Back button clicked');
-                    // Implement your back logic here
-                    window.webkit.messageHandlers.help_back.postMessage({});
-                },
-                sendEmail() {
-                    console.log('Send Email button clicked');
-                    // Implement your send email logic here
-                    window.webkit.messageHandlers.help_email.postMessage({});
-                },
-                $t(key) {
-                    // Implement your translation logic here
-                    return this.helpNew[key];
-                }
+    <div class="desc">
+      <div class="title">
+        {{page_data.unableToConnect}}
+      </div>
+      <div class="detail">
+        {{page_data.topDetail}}
+      </div>
+    </div>
+    <div class="cameras">
+      <div @click="toGuide(item.src)" v-for="(item,index) of cameras" class="item">
+        <img style="border-radius: 12px;" :src="`./img/${item.src}.png`" alt="">
+        <div>{{item.title}}</div>
+      </div>
+    </div>
+    <div class="list">
+      <div @click="toDetail(item.key)" :style="index==list.length-1?'border:0':''"
+        v-for="(item,index) of list.filter((item,index)=>showRefundSwitch?index<list.length:index<list.length-1)"
+        :key="index">
+        <div class="list-item">
+          {{item.name}}
+          <img src="./img/enter.png" alt="">
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="module">
+    new Vue({
+      el: '#app',
+      data: {
+        uuid: "",
+        appId: "",
+        showRefundSwitch: true,
+        slideType: "",
+        navHeight: 0,
+        language: "en",
+        page_data: {},
+        list: [
+          {
+            name: "",
+            key: "question1"
+          },
+          {
+            name: "",
+            key: "question2"
+          },
+          {
+            name: "",
+            key: "question3"
+          },
+          {
+            name: "",
+            key: "question4"
+          },
+          {
+            name: "",
+            key: "question5"
+          },
+          {
+            name: "",
+            key: "question6"
+          },
+          {
+            name: "",
+            key: "question7"
+          },
+          {
+            name: "",
+            key: "question8"
+          },
+          {
+            name: "",
+            key: "question9"
+          },
+          {
+            name: "",
+            key: "question10"
+          },
+          {
+            name: "",
+            key: "question11"
+          },
+          {
+            name: "",
+            key: "question12"
+          },
+          {
+            name: "",
+            key: "question13"
+          },
+          {
+            name: "",
+            key: "question14"
+          },
+          {
+            name: "",
+            key: "unsolved"
+          }
+        ],
+        repeatTime: 0,
+        cameras: [
+          {
+            title: "",
+            src: "normal"
+          },
+          {
+            title: "",
+            src: "tapo"
+          },
+          {
+            title: "",
+            src: "blink"
+          },
+          {
+            title: "",
+            src: "wyze"
+          },
+          {
+            title: "",
+            src: "yiiot"
+          },
+          {
+            title: "",
+            src: "arlo"
+          },
+        ],
+      },
+      mounted() {
+        window.iostojs = this.iostojs;
+        this.setAnimation()
+        this.setPageData()
+        let id = this.getQuery("id") || 'default';
+      },
+      methods: {
+        iostojs(action) {
+          let json = JSON.parse(this.decode(action));
+          this.showRefundSwitch = json.show_problem_not_solved
+          window.navHeight = json.nav_height
+          let pageInfo = {
+            appId: json.app_id,
+            language: this.getLanguage(json.system_language),
+            navHeight:json.nav_height,
+            uuid:  json.device_uuid
+          }
+          sessionStorage.setItem("pageInfo", JSON.stringify(pageInfo))
+          this.setPageData()
+          return (
+            'ok'
+          )
+        },
+        setPageData() {
+          let pageInfo = sessionStorage.getItem("pageInfo") && JSON.parse(sessionStorage.getItem("pageInfo")) || {}
+          this.language =pageInfo.language ;
+          this.uuid = pageInfo.uuid;
+          this.appId = pageInfo.appId;
+          this.navHeight = pageInfo.navHeight; 
+          this.page_data = locales[this.language] || locales['en']
+          document.title = this.page_data.help;
+          this.list = this.list.map((item, index) => {
+            if (item.key == 'unsolved') {
+              item.name = this.page_data.unsolvedTitle
+            } else {
+              item.name = this.page_data.answers[item.key].title
             }
-        });
-    </script>
+            return item
+          })
+          this.cameras = this.cameras.map((item, index) => {
+            item.title = this.page_data[item.src].title
+            return item
+          })
+        },
+        decode(str) {
+          return decodeURIComponent(atob(str).split('').map(function (c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+          }).join(''));
+        },
+        setAnimation() {
+          var view = document.getElementById("app")
+          let type = this.getQuery('type')
+          if (type == 'out') {
+            view.className = "slide-out"
+          }
+          setTimeout(() => {
+            view.className = null
+          }, 200);
+        },
+        toDetail(key) {
+          if (key == "unsolved") {
+            window.location.href = "./detail.html?type=in"
+          } else {
+            window.location.href = "./answer.html?type=in&key=" + key
+          }
+        },
+        toGuide(src) {
+          window.location.href = "./guide.html?type=in&src=" + src
+        },
+        getLanguage(language) {
+          let targetLanguage = ''
+          languageCodes.forEach((item) => {
+            let language_index = language.indexOf(item)
+            if (language_index != '-1') {
+              targetLanguage = item
+            }
+          })
+          if (targetLanguage) {
+            return targetLanguage
+          } else {
+            return 'en'
+          }
+        },
+        back() {
+          // jstoios
+          window.webkit.messageHandlers.page_back.postMessage({
+            type: "page_back"
+          });
+        },
+        getQuery(name) {
+          let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+          let r = window.location.search.substr(1).match(reg);
+          if (r != null) {
+            // 对参数值进行解码
+            return decodeURIComponent(r[2]);
+          }
+          return null;
+        },
+      }
+    })
+  </script>
+  <script>
+
+  </script>
 </body>
 
 </html>

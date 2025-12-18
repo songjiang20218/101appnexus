@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <!-- <script src="./axios.js"></script> -->
+    <title>refund</title>
+    <script src="./vue.min.js"></script>
+    <script src="./locale.js"></script>
+</head>
+<style>
+    /* 页面容器 */
+
+    /* 定义从左侧滑入的关键帧动画 */
+    @keyframes slideInFromRight {
+        from {
+            transform: translateX(100%);
+        }
+
+        to {
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes slideInFromLeft {
+        from {
+            transform: translateX(-100%);
+        }
+
+        to {
+            transform: translateX(0);
+        }
+    }
+
+
+    /* 应用滑入动画 */
+    .slide-in {
+        animation: slideInFromRight 0.2s ease-out forwards;
+        overflow-x: hidden;
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
+
+    .slide-out {
+        animation: slideInFromLeft 0.2s ease-out forwards;
+        overflow-x: hidden;
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        background: #F8F8F8;
+    }
+
+
+    #app {
+        box-sizing: border-box;
+        padding-bottom: calc(32px + constant(safe-area-inset-bottom));
+        padding-bottom: calc(32px + env(safe-area-inset-bottom));
+
+    }
+
+    .header {
+        padding: 16px;
+        background: #FFFFFF;
+        text-align: center;
+        position: fixed;
+        font-size: 17px;
+        font-family: SFPro, SFPro;
+        font-weight: 600;
+        color: #000000;
+        line-height: 22px;
+        left: 0;
+        top: 0;
+        width: 100%;
+        box-sizing: border-box;
+        z-index: 10;
+    }
+
+    .back {
+        position: absolute;
+        left: 8px;
+        bottom: 16px;
+        width: 24px;
+    }
+
+    .content {
+        padding: 0 16px;
+    }
+
+    .content>.list {
+        width: 100%;
+        background: #FFFFFF;
+        border-radius: 16px;
+        overflow: hidden;
+        padding-left: 16px;
+        box-sizing: border-box;
+        margin-bottom: 16px;
+    }
+
+    .content>.list>div {
+        padding: 13px 16px 13px 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .content>.list>div>.name {
+        font-size: 16px;
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 400;
+        color: rgba(0, 0, 0, 0.6);
+        line-height: 24px;
+        text-align: left;
+        max-width: 100px;
+    }
+
+    .content>.list>div>.id {
+        font-size: 16px;
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 400;
+        color: rgba(0, 0, 0, 0.7);
+        line-height: 22px;
+        text-align: right;
+        width: calc(100% - 104px);
+        word-break: break-all;
+    }
+
+
+
+
+
+    .button {
+        width: calc(100% - 48px);
+        margin: 24px auto 0;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #2D79FF;
+        border-radius: 16px;
+        font-size: 17px;
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 600;
+        color: #FFFFFF;
+        line-height: 24px;
+    }
+
+    .button:active {
+        opacity: 0.9;
+    }
+
+    .title {
+        font-size: 16px;
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 400;
+        color: rgba(0, 0, 0, 0.7);
+        line-height: 22px;
+        margin-bottom: 16px;
+        padding: 0 16px;
+        margin-top: 24px;
+    }
+
+    .textarea {
+        padding: 0 16px;
+    }
+
+    .textarea>textarea {
+        border: 0;
+        outline: none;
+        text-align: left;
+        font-size: 16px;
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 400;
+        color: rgba(0, 0, 0, 0.8);
+        line-height: 22px;
+        width: 100%;
+        padding: 13px;
+        height: 144px;
+        box-sizing: border-box;
+        background: #FFFFFF;
+        border-radius: 16px;
+    }
+
+    .top {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 0 40px;
+        margin-bottom: 40px;
+    }
+
+    .top>.title {
+        font-size: 21px;
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 600;
+        color: #000000;
+        line-height: 29px;
+    }
+
+    .top>.detail {
+        font-size: 14px;
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 400;
+        color: rgba(0, 0, 0, 0.7);
+        line-height: 20px;
+    }
+</style>
+
+<body>
+    <!-- -->
+    <div id="app" :style="`padding-top:${70+navHeight}px`">
+        <div class="header" :style="`padding-top:${16+navHeight}px`">
+            <img @click="back" class="back" src="./img/back.png" alt="">
+            {{page_data.applyRefund}}
+        </div>
+        <div class="top">
+            <img style="width: 64px;" src="./img/applySuccess.png" alt="">
+            <div class="title">{{page_data.applySuccess}}</div>
+            <div class="detail">
+                {{page_data.applyDetail1}}
+                {{progressTrackingLink}}
+                {{page_data.applyDetail2}}
+            </div>
+        </div>
+        <div class="content">
+            <div class="list">
+                <div>
+                    <div class="name">
+                        {{page_data.orderNumber}}
+                    </div>
+                    <div class="id">{{workOrderKey}}</div>
+                </div>
+                <div>
+                    <div class="name">
+                        {{page_data.progressTracking}}
+                    </div>
+                    <div class="id">{{progressTrackingLink}}</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script type="module">
+        new Vue({
+            el: '#app',
+            data: {
+                language: "",
+                page_data: {},
+                selected: 0,
+                reason: "",
+                navHeight: 0,
+                workOrderKey: "",
+                progressTrackingLink: "",
+                prePage:""
+            },
+            mounted() {
+                this.workOrderKey = this.getQuery('workOrderKey') || ""
+                this.progressTrackingLink = this.getQuery('progressTrackingLink') || ""
+                this.prePage = this.getQuery('prePage') || "apply2"
+                this.setPageInfo()
+                this.setAnimation()
+            },
+            methods: {
+                setPageInfo() {
+                    let pageInfo = sessionStorage.getItem("pageInfo") && JSON.parse(sessionStorage.getItem("pageInfo")) || {}
+                    this.navHeight = pageInfo.navHeight || 0
+                    this.uuid = pageInfo.uuid || "default";
+                    let language = pageInfo.language || 'en'
+                    this.language = this.getLanguage(language);
+                    this.page_data = locales[this.language]
+                },
+                setAnimation() {
+                    var view = document.getElementById("app")
+                    let type = this.getQuery('type')
+                    if (type == 'out') {
+                        view.className = "slide-out"
+                    } else if (type == 'in') {
+                        view.className = "slide-in"
+                    }
+                    setTimeout(() => {
+                        view.className = null
+                    }, 300);
+                },
+                back() {
+                    if (this.prePage == 'detail') {
+                        window.location.href = "./detail.html?type=out"
+                    } else {
+                        window.location.href = "./apply2.html?type=out"
+                    }
+                },
+                install() {
+                    window.open("https://apps.apple.com/app/id6446840227")
+                },
+                getDateStr(ts) {
+                    let date = new Date(ts);
+                    const year = date.getFullYear();
+                    const isCurrentYear = year === new Date().getFullYear();
+                    if (isCurrentYear) {
+                        return this.formatDate(date, "MM-DD hh:mm:ss")
+                    } else {
+                        return this.formatDate(date, "YYYY-MM-DD hh:mm")
+                    }
+                },
+                formatDate(date, format) {
+                    const year = date.getFullYear();
+                    const month = (date.getMonth() + 1 + "").padStart(2, "0");
+                    const day = (date.getDate() + "").padStart(2, "0");
+                    const hour = (date.getHours() + "").padStart(2, "0");
+                    const minute = (date.getMinutes() + "").padStart(2, "0");
+                    const second = (date.getSeconds() + "").padStart(2, "0");
+                    return format
+                        .replace("YYYY", year)
+                        .replace("MM", month)
+                        .replace("DD", day)
+                        .replace("hh", hour)
+                        .replace("mm", minute)
+                        .replace("ss", second);
+                },
+                getLanguage(language) {
+                    let targetLanguage = ''
+                    languageCodes.forEach((item) => {
+                        let language_index = language.indexOf(item)
+                        if (language_index != '-1') {
+                            targetLanguage = item
+                        }
+                    })
+                    if (targetLanguage) {
+                        return targetLanguage
+                    } else {
+                        return 'en'
+                    }
+                },
+
+                getQuery(name) {
+                    let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+                    let r = window.location.search.substr(1).match(reg);
+                    if (r != null) {
+                        // 对参数值进行解码
+                        return decodeURIComponent(r[2]);
+                    }
+                    return null;
+                },
+            }
+        })
+    </script>
+    <script>
+
+    </script>
+</body>
+
+</html>
